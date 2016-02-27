@@ -12,6 +12,10 @@ opts.on("-c", "--country", "Adds country to the new filename (ex: south-korea)")
   options[:country] = c
 end
 
+opts.on("-l", "--locality", "Adds locality / city to the new filename (ex: seoul)") do |l|
+  options[:locality] = l
+end
+
 opts.on("-d", "--date", "Adds date to the new filename (ex: 29/07/2016)") do |d|
   options[:date] = d
 end

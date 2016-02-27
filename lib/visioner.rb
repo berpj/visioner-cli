@@ -7,7 +7,7 @@ require 'optparse'
 
 module Visioner
 
-  def self.get_country(latitude, longitude)
+  def self.get_place(latitude, longitude, type)
     # Prepare request
     url = "https://maps.googleapis.com/maps/api/geocode/json?latlng=#{latitude},#{longitude}"
     url = URI(url)
@@ -15,19 +15,21 @@ module Visioner
     res = Net::HTTP.new(url.host, url.port)
     res.use_ssl = true
 
-    # Get country
-    country = 'unknown'
+    # Get place
+    place = 'unknown'
     res.start do |http|
       resp = http.request(req)
       json = JSON.parse(resp.body)
-      if json && json['status'] == 'OK' && json['results'][0]['address_components'] && json['results'][0]['address_components'].select {|address_component| address_component['types'][0] == 'country' }
-        country = json['results'][0]['address_components'].select {|address_component| address_component['types'][0] == 'country' }
-        country = country[0]['long_name']
-        country = country.downcase.tr(" ", "-")
+      if json && json['status'] == 'OK' && json['results'][0]['address_components'] && json['results'][0]['address_components'].select {|address_component| address_component['types'][0] == type }
+        place = json['results'][0]['address_components'].select {|address_component| address_component['types'][0] == type }
+        if place[0]
+          place = place[0]['long_name']
+          place = place.downcase.tr(" ", "-")
+        end
       end
     end
 
-    return country
+    return place
   end
 
   def self.rename_all(images, options)
@@ -101,12 +103,18 @@ module Visioner
         country = ''
         if options[:country]
           country = 'unknown' # Fallback
-          country = self.get_country(exif.gps.latitude, exif.gps.longitude) + '_' if exif.gps_latitude && exif.gps_longitude
+          country = self.get_place(exif.gps.latitude, exif.gps.longitude, 'country') + '_' if exif.gps_latitude && exif.gps_longitude
         end
 
-        puts "#{image_name} -> #{country + date + name + counter.to_s + File.extname(image_name)}"
+        locality = ''
+        if options[:locality]
+          locality = 'unknown' # Fallback
+          locality = self.get_place(exif.gps.latitude, exif.gps.longitude, 'locality') + '_' if exif.gps_latitude && exif.gps_longitude
+        end
 
-        File.rename(image_name, File.dirname(image_name) + "/" + country + date + name + counter.to_s + File.extname(image_name))
+        puts "#{image_name} -> #{country + locality + date + name + counter.to_s + File.extname(image_name)}"
+
+        File.rename(image_name, File.dirname(image_name) + "/" + country + locality + date + name + counter.to_s + File.extname(image_name))
       end
 
     end
