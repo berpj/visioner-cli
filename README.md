@@ -9,7 +9,7 @@ Automatically rename your pictures using Google Vision API and metadata.
 
 ## Usage
 
-    $ export GOOGLE_VISION_API_KEY=...
+    $ export GOOGLE_API_KEY=...
     $ bin/visioner [options] image ...
 
 **Options:**
@@ -32,7 +32,7 @@ Automatically rename your pictures using Google Vision API and metadata.
 
 ### Examples:
 
-    $ export GOOGLE_VISION_API_KEY=BI34SyB5DhqV5ReVnkmIM79812yux9UFazNdynD
+    $ export GOOGLE_API_KEY=BI34SyB5DhqV5ReVnkmIM79812yux9UFazNdynD
 
     $ bin/visioner --format label /Desktop/travel-south-korea-2016-2/*.jpg
       /Desktop/travel-south-korea-2016-2/IMG_213.jpg -> sea.jpg
