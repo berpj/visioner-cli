@@ -10,7 +10,7 @@ Gem::Specification.new do |spec|
   spec.email         = ["pj@bergeron.io"]
 
   spec.summary       = %q{Automatically rename your pictures using Google Vision API.}
-  spec.homepage      = "https://bergeron.io"
+  spec.homepage      = "https://github.com/berpj/visioner"
   spec.license       = "MIT"
 
   spec.files         = `git ls-files -z`.split("\x0").reject { |f| f.match(%r{^(test|spec|features)/}) }

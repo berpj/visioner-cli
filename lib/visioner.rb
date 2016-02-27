@@ -4,12 +4,16 @@ require 'net/http'
 require 'json'
 
 module Visioner
-
+  
   def self.rename_all(images)
-    images.each do |image|
+    images.each do |image_name|
 
       # Convert image to Base 64
-      b64_data = Base64.encode64(File.open(image, "rb").read)
+      begin
+        b64_data = Base64.encode64(File.open(image_name, "rb").read)
+      rescue
+        puts "Error: can't read file"
+      end
 
       # Prepare request
       api_key = ENV['GOOGLE_VISION_API_KEY']
@@ -49,8 +53,14 @@ module Visioner
       end
 
       unless name.empty?
-        puts "#{image} -> #{name + File.extname(image)}"
-        File.rename(image, File.dirname(image) + "/" + name + File.extname(image))
+        counter = ''
+        while File.exist?(File.dirname(image_name) + "/" + name + counter.to_s + File.extname(image_name)) do
+          counter = counter.to_i + 1
+        end
+
+        puts "#{image_name} -> #{name + counter.to_s + File.extname(image_name)}"
+
+        File.rename(image_name, File.dirname(image_name) + "/" + name + counter.to_s + File.extname(image_name))
       end
 
     end
