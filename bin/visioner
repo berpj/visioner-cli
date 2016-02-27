@@ -1,0 +1,11 @@
+#!/usr/bin/env ruby
+
+require 'visioner'
+
+if ARGV.empty?
+  puts "Visioner automatically renames your pictures using Google API Visioner"
+  puts "Usage: visioner image ..."
+  exit 1
+else
+  Visioner.rename_all(ARGV)
+end
