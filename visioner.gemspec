@@ -9,7 +9,7 @@ Gem::Specification.new do |spec|
   spec.authors       = ["Pierre-Jean Bergeron"]
   spec.email         = ["pj@bergeron.io"]
 
-  spec.summary       = %q{Automatically rename your pictures using Google Vision API.}
+  spec.summary       = %q{Automatically rename your pictures using Google Vision API and metadata.}
   spec.homepage      = "https://github.com/berpj/visioner"
   spec.license       = "MIT"
 
@@ -20,4 +20,5 @@ Gem::Specification.new do |spec|
 
   spec.add_development_dependency "bundler", "~> 1.11"
   spec.add_development_dependency "rake", "~> 10.0"
+  spec.add_development_dependency "exifr", "~> 1.2"
 end
