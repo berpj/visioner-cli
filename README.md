@@ -1,6 +1,6 @@
 # Visioner
 
-Automatically rename your pictures using Google Vision API.
+Automatically rename your pictures using Google Vision API and metadata.
 
 ## Installation
 
