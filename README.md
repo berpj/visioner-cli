@@ -18,12 +18,17 @@ Automatically rename your pictures using Google Vision API and metadata.
 
 -h, --help                       Displays help
 
-Format directives:
+**Format directives:**
+
    label - uses google vision API to find a label
+   
    locality - uses metadata to find the locality / city
+   
    country - uses metadata to find the country
+   
    date - uses metadata to find the original date
-Format example: date_country_label
+   
+**Format example:** `date_country_label`
 
 **Examples:**
 
