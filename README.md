@@ -16,7 +16,7 @@ Automatically rename your pictures using Google Vision API and metadata.
 
 -c, --country                    Adds country to the new filename (ex: south-korea)
 
--i, --city                    Adds city to the new filename (ex: seoul)
+-l, --locality                    Adds locality to the new filename (ex: seoul)
 
 -d, --date                       Adds date to the new filename (ex: 29/07/2016)
 
