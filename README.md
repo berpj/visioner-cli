@@ -20,3 +20,8 @@ Example:
       /Desktop/travel-south-korea-2016/IMG_214.jpg -> tower.jpg
       /Desktop/travel-south-korea-2016/IMG_215.jpg -> people.jpg
       /Desktop/travel-south-korea-2016/IMG_216.jpg -> sea2.jpg
+
+## To do
+
+- Get city and country from GPS metadata
+- Get month-day-year from timestamp
