@@ -32,6 +32,52 @@ module Visioner
     return place
   end
 
+  def self.get_label(image_name)
+    # Convert image to Base 64
+    begin
+      b64_data = Base64.encode64(File.open(image_name, "rb").read)
+    rescue
+      puts "Error: can't read file. Exiting..."
+    end
+
+    # Prepare request
+    api_key = ENV['GOOGLE_API_KEY']
+    content_type = "Content-Type: application/json"
+    url = "https://vision.googleapis.com/v1/images:annotate?key=#{api_key}"
+    data = {
+      "requests": [
+        {
+          "image": {
+            "content": b64_data
+          },
+          "features": [
+            {
+              "type": "LABEL_DETECTION",
+              "maxResults": 1
+            }
+          ]
+        }
+      ]
+    }.to_json
+    url = URI(url)
+    req = Net::HTTP::Post.new(url, initheader = {'Content-Type' =>'application/json'})
+    req.body = data
+    res = Net::HTTP.new(url.host, url.port)
+    res.use_ssl = true
+
+    label = 'unknown'
+    res.start do |http|
+      resp = http.request(req)
+      json = JSON.parse(resp.body)
+      if json && json["responses"] && json["responses"][0]["labelAnnotations"] && json["responses"][0]["labelAnnotations"][0]["description"]
+        label = json['responses'][0]['labelAnnotations'][0]['description']
+        label = label.tr(" ", "-")
+      end
+    end
+
+    return label
+  end
+
   def self.rename_all(images, options)
     images.each do |image_name|
 
@@ -41,81 +87,46 @@ module Visioner
         next
       end
 
-
-      # Convert image to Base 64
-      begin
-        b64_data = Base64.encode64(File.open(image_name, "rb").read)
-      rescue
-        puts "Error: can't read file. Exiting..."
+      label = ''
+      if options[:format].include? 'label'
+        label = 'unknown' # Fallback
+        label = self.get_label(image_name)
       end
 
-      # Prepare request
-      api_key = ENV['GOOGLE_API_KEY']
-      content_type = "Content-Type: application/json"
-      url = "https://vision.googleapis.com/v1/images:annotate?key=#{api_key}"
-      data = {
-        "requests": [
-          {
-            "image": {
-              "content": b64_data
-            },
-            "features": [
-              {
-                "type": "LABEL_DETECTION",
-                "maxResults": 1
-              }
-            ]
-          }
-        ]
-      }.to_json
-      url = URI(url)
-      req = Net::HTTP::Post.new(url, initheader = {'Content-Type' =>'application/json'})
-      req.body = data
-      res = Net::HTTP.new(url.host, url.port)
-      res.use_ssl = true
-
-      # Rename file
-      name = ""
-      res.start do |http|
-        resp = http.request(req)
-        json = JSON.parse(resp.body)
-        if json && json["responses"] && json["responses"][0]["labelAnnotations"] && json["responses"][0]["labelAnnotations"][0]["description"]
-          name = json['responses'][0]['labelAnnotations'][0]['description']
-          name = name.tr(" ", "-")
-        end
-      end
-
-      unless name.empty?
-        counter = nil
-        while File.exist?(File.dirname(image_name) + "/" + name + counter.to_s + File.extname(image_name)) do
-          counter = 1 if counter == nil
-          counter = counter.to_i + 1
-        end
-
+      date = ''
+      if options[:format].include? 'date'
+        date = File.mtime(image_name).strftime('%m-%d-%Y') # Fallback
         exif = EXIFR::JPEG.new(image_name)
-
-        date = ''
-        if options[:date]
-          date = File.mtime(image_name).strftime('%m-%d-%Y') # Fallback
-          date = exif.date_time_original.strftime('%m-%d-%Y') + '_' if exif.date_time_original
-        end
-
-        country = ''
-        if options[:country]
-          country = 'unknown' # Fallback
-          country = self.get_place(exif.gps.latitude, exif.gps.longitude, 'country') + '_' if exif.gps_latitude && exif.gps_longitude
-        end
-
-        locality = ''
-        if options[:locality]
-          locality = 'unknown' # Fallback
-          locality = self.get_place(exif.gps.latitude, exif.gps.longitude, 'locality') + '_' if exif.gps_latitude && exif.gps_longitude
-        end
-
-        puts "#{image_name} -> #{country + locality + date + name + counter.to_s + File.extname(image_name)}"
-
-        File.rename(image_name, File.dirname(image_name) + "/" + country + locality + date + name + counter.to_s + File.extname(image_name))
+        date = exif.date_time_original.strftime('%m-%d-%Y') if exif && exif.date_time_original
       end
+
+      country = ''
+      if options[:format].include? 'country'
+        country = 'unknown' # Fallback
+        exif = EXIFR::JPEG.new(image_name)
+        country = self.get_place(exif.gps.latitude, exif.gps.longitude, 'country') if exif && exif.gps_latitude && exif.gps_longitude
+      end
+
+      locality = ''
+      if options[:format].include? 'locality'
+        locality = 'unknown' # Fallback
+        locality = self.get_place(exif.gps.latitude, exif.gps.longitude, 'locality') if exif.gps_latitude && exif.gps_longitude
+      end
+
+      options[:format].sub! 'label', label
+      options[:format].sub! 'date', date
+      options[:format].sub! 'locality', locality
+      options[:format].sub! 'country', country
+
+      counter = nil
+      while File.exist?(File.dirname(image_name) + "/" + options[:format] + counter.to_s + File.extname(image_name)) do
+        counter = 1 if counter == nil
+        counter = counter.to_i + 1
+      end
+
+      puts "#{image_name} -> #{options[:format] + counter.to_s + File.extname(image_name)}"
+
+      File.rename(image_name, File.dirname(image_name) + "/" + options[:format] + counter.to_s + File.extname(image_name))
 
     end
   end
