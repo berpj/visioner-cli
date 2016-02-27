@@ -30,7 +30,7 @@ Automatically rename your pictures using Google Vision API and metadata.
    
 **Format example:** `date_country_label`
 
-### Examples:**
+### Examples:
 
     $ export GOOGLE_VISION_API_KEY=BI34SyB5DhqV5ReVnkmIM79812yux9UFazNdynD
 
