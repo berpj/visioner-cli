@@ -34,11 +34,7 @@ module Visioner
 
   def self.get_label(image_name)
     # Convert image to Base 64
-    begin
-      b64_data = Base64.encode64(File.open(image_name, "rb").read)
-    rescue
-      puts "Error: can't read file. Exiting..."
-    end
+    b64_data = Base64.encode64(File.open(image_name, "rb").read)
 
     # Prepare request
     api_key = ENV['GOOGLE_API_KEY']
@@ -81,15 +77,17 @@ module Visioner
   def self.rename_all(images, options)
     images.each do |image_name|
 
-      # Check file extension
-      if File.extname(image_name) != '.jpg'
+      # Check file
+      if ! File.readable?(image_name)
+        puts "Error: can't read file. Continuing..."
+        next
+      elsif File.extname(image_name) != '.jpg'
         puts "Error: can only rename jpg files. Continuing..."
         next
       end
 
       label = ''
       if options[:format].include? 'label'
-        label = 'unknown' # Fallback
         label = self.get_label(image_name)
       end
 
