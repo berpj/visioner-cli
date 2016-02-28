@@ -112,20 +112,21 @@ module Visioner
         locality = self.get_place(exif.gps.latitude, exif.gps.longitude, 'locality') if exif && exif.gps_latitude && exif.gps_longitude
       end
 
-      options[:format].sub! 'label', label
-      options[:format].sub! 'date', date
-      options[:format].sub! 'locality', locality
-      options[:format].sub! 'country', country
+      new_image_name = options[:format].dup
+      new_image_name.sub! 'label', label
+      new_image_name.sub! 'date', date
+      new_image_name.sub! 'locality', locality
+      new_image_name.sub! 'country', country
 
       counter = nil
-      while File.exist?(File.dirname(image_name) + "/" + options[:format] + counter.to_s + File.extname(image_name)) do
+      while File.exist?(File.dirname(image_name) + "/" + new_image_name + counter.to_s + File.extname(image_name)) do
         counter = 1 if counter == nil
         counter = counter.to_i + 1
       end
 
-      puts "#{image_name} -> #{options[:format] + counter.to_s + File.extname(image_name)}"
+      puts "#{image_name} -> #{new_image_name + counter.to_s + File.extname(image_name)}"
 
-      File.rename(image_name, File.dirname(image_name) + "/" + options[:format] + counter.to_s + File.extname(image_name))
+      File.rename(image_name, File.dirname(image_name) + "/" + new_image_name + counter.to_s + File.extname(image_name))
 
     end
   end
