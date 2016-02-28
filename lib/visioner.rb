@@ -108,7 +108,7 @@ module Visioner
       locality = ''
       if options[:format].include? 'locality'
         locality = 'unknown' # Fallback
-        locality = self.get_place(exif.gps.latitude, exif.gps.longitude, 'locality') if exif.gps_latitude && exif.gps_longitude
+        locality = self.get_place(exif.gps.latitude, exif.gps.longitude, 'locality') if exif && exif.gps_latitude && exif.gps_longitude
       end
 
       options[:format].sub! 'label', label
