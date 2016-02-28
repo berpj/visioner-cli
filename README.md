@@ -16,19 +16,15 @@ Automatically rename your pictures using Google Vision API and metadata.
 
 **Options:**
 
--f, --format FORMAT              Desired format for the new filenames
-
--h, --help                       Displays help
+- -f, --format FORMAT              Desired format for the new filenames
+- -h, --help                       Displays help
 
 **Format directives:**
 
-   label - uses google vision API to find a label
-   
-   locality - uses metadata to find the locality / city
-   
-   country - uses metadata to find the country
-   
-   date - uses metadata to find the original date
+- label - uses google vision API to find a label
+- locality - uses metadata to find the locality / city
+- country - uses metadata to find the country
+- date - uses metadata to find the original date
    
 **Format example:** `date_country_label`
 
