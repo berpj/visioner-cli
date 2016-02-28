@@ -108,6 +108,7 @@ module Visioner
       locality = ''
       if options[:format].include? 'locality'
         locality = 'unknown' # Fallback
+        exif = EXIFR::JPEG.new(image_name)
         locality = self.get_place(exif.gps.latitude, exif.gps.longitude, 'locality') if exif && exif.gps_latitude && exif.gps_longitude
       end
 
