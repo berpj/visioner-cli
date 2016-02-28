@@ -124,7 +124,7 @@ module Visioner
         counter = counter.to_i + 1
       end
 
-      puts "#{image_name} -> #{new_image_name + counter.to_s + File.extname(image_name)}"
+      puts "#{File.basename(image_name)} -> #{new_image_name + counter.to_s + File.extname(image_name)}"
 
       File.rename(image_name, File.dirname(image_name) + "/" + new_image_name + counter.to_s + File.extname(image_name))
 
