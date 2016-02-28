@@ -43,3 +43,5 @@ Automatically rename your pictures using Google Vision API and metadata.
       /Desktop/travel-south-korea-2016-2/IMG_214.jpg -> south-korea_seoul_03-15-2015_tower.jpg
       /Desktop/travel-south-korea-2016-2/IMG_215.jpg -> south-korea_seoul_03-28-2015_people.jpg
       /Desktop/travel-south-korea-2016-2/IMG_216.jpg -> south-korea_seoul_04-02-2015_sea2.jpg
+
+<img src="demo.gif" width="75%">
