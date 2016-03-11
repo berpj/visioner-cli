@@ -4,6 +4,7 @@ require 'net/http'
 require 'json'
 require 'exifr'
 require 'optparse'
+require 'mini_magick'
 
 module Visioner
 
@@ -33,8 +34,15 @@ module Visioner
   end
 
   def self.get_label(image_name)
+    # Open image
+    image = MiniMagick::Image.open(image_name)
+
+    # Resize image
+    image.resize "640x" + image.height.to_s if image.width > 640
+    image.resize image.width.to_s + "x480" if image.height > 480
+
     # Convert image to Base 64
-    b64_data = Base64.encode64(File.open(image_name, "rb").read)
+    b64_data = Base64.encode64(image.to_blob)
 
     # Prepare request
     api_key = ENV['GOOGLE_API_KEY']
